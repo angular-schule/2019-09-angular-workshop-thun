@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Book } from '../shared/book';
 import { BookRatingService } from '../shared/book-rating.service';
+import { BookStoreService } from '../shared/book-store.service';
 
 @Component({
   selector: 'br-dashboard',
@@ -12,23 +13,11 @@ export class DashboardComponent implements OnInit {
   url = '//angular.schule';
   books: Book[];
 
-  constructor(private rs: BookRatingService) { }
+  constructor(private rs: BookRatingService, private bs: BookStoreService) { }
 
   ngOnInit() {
-    this.books = [
-      {
-        isbn: '000',
-        title: 'Angular',
-        description: 'Grundlagen und mehr',
-        rating: 5
-      },
-      {
-        isbn: '111',
-        title: 'React',
-        description: 'Ein anderes Framework',
-        rating: 3
-      }
-    ];
+    this.bs.getAll()
+      .subscribe(books => this.books = books);
   }
 
   rateUp(book: Book) {
@@ -48,7 +37,10 @@ export class DashboardComponent implements OnInit {
   }
 
   createBook(book: Book) {
-    this.books = [...this.books, book];
+    this.bs.create(book).subscribe(() => {
+      this.books = [...this.books, book];
+    });
+
   }
 
 }

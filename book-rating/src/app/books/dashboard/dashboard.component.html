@@ -1,13 +1,21 @@
-<br-create-book (create)="createBook($event)"></br-create-book>
+<br-create-book
+  (create)="createBook($event)"
+  [state]="formState"></br-create-book>
 
 <hr>
 
-<br-book
-  *ngFor="let b of books"
-  [book]="b"
-  (rateUp)="rateUp($event)"
-  (rateDown)="rateDown(b)"></br-book>
+<ng-container *ngIf="books else loading">
+  <br-book
+    *ngFor="let b of books"
+    [book]="b"
+    (rateUp)="rateUp($event)"
+    (rateDown)="rateDown(b)"></br-book>
 
-<strong>Anzahl Bücher:</strong> {{ books.length }}
+  <strong>Anzahl Bücher:</strong> {{ books.length }}
+</ng-container>
+
+<ng-template #loading>
+  <strong>Bücher werden geladen...</strong>
+</ng-template>
 
 <a [href]="url">Zur Website</a>
