@@ -31,3 +31,8 @@
 <pre>
 {{ bookForm.value | json }}
 </pre>
+
+
+<ng-container *ngIf="results$ | async as results">
+  <pre>{{ results | json }}</pre>
+</ng-container>

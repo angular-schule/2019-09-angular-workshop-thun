@@ -1,18 +1,24 @@
-import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Book } from '../shared/book';
+import { filter, debounceTime, distinctUntilChanged, map, switchMap, takeUntil } from 'rxjs/operators';
+import { BookStoreService } from '../shared/book-store.service';
+import { timer, Subject, Observable } from 'rxjs';
 
 @Component({
   selector: 'br-create-book',
   templateUrl: './create-book.component.html',
   styleUrls: ['./create-book.component.scss']
 })
-export class CreateBookComponent implements OnInit {
+export class CreateBookComponent implements OnInit, OnDestroy {
+
+  destroy$ = new Subject();
+  results$: Observable<Book[]>;
 
   bookForm: FormGroup;
   @Output() create = new EventEmitter<Book>();
 
-  constructor() { }
+  constructor(private bs: BookStoreService) { }
 
   ngOnInit() {
     this.bookForm = new FormGroup({
@@ -25,8 +31,13 @@ export class CreateBookComponent implements OnInit {
       description: new FormControl('')
     });
 
-    this.bookForm.get('title').valueChanges
-      .subscribe(value => console.log(value));
+    this.results$ = this.bookForm.get('title').valueChanges.pipe(
+      filter(value => value.length >= 3),
+      debounceTime(1000),
+      distinctUntilChanged(),
+      switchMap(value => this.bs.search(value)),
+      // takeUntil(this.destroy$)
+    );
   }
 
   isInvalid(name: string) {
@@ -52,6 +63,10 @@ export class CreateBookComponent implements OnInit {
       description: ''
     });
 
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
   }
 
 }
