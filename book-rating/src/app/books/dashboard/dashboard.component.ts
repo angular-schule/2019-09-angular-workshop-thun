@@ -17,7 +17,10 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.bs.getAll()
-      .subscribe(books => this.books = books);
+      .subscribe(
+        books => this.books = books,
+        err => console.log('COMP ERR', err)
+      );
   }
 
   rateUp(book: Book) {
