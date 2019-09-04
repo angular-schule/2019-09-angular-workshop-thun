@@ -1,8 +1,12 @@
+<button (click)="logForm()" class="btn btn-primary">Log Form</button>
+
 <form [formGroup]="bookForm">
 
   <div class="form-group">
     <label>ISBN</label>
     <input type="text" formControlName="isbn" class="form-control">
+
+    <div class="feedback-red" *ngIf="isInvalid('isbn')">Die ISBN ist ungültig.</div>
   </div>
 
   <div class="form-group">
