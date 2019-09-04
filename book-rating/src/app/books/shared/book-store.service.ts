@@ -14,7 +14,7 @@ export class BookStoreService {
   constructor(private http: HttpClient) { }
 
   getAll() {
-    return this.http.get<Book[]>(this.apiUrl + '/booksssss').pipe(
+    return this.http.get<Book[]>(this.apiUrl + '/books').pipe(
       catchError(err => {
         console.log('SRVC ERR', err);
 
